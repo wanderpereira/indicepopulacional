@@ -1,37 +1,9 @@
-import "./input.css";
-import api from "./api";
-import { useEffect, useState } from "react";
+import React, { useContext } from "react";
+import { Context } from "./context/DefaultContext";
 
-function App() {
-  const [estados, setEstados] = useState();
-  const [response, setResponse] = useState("Aguardando uma opção ser selecionada...");
-  const [estado, setEstado] = useState("")
-  
-
-  const handleChange = (e) => {
-        api.post('/estados', {sigla: e.target.value, geo: e.target.selectedOptions[0].getAttribute('data-geo')})
-        .then(response => setResponse(response.data));
-        setEstado(e.target.value);
-  }
-
-    
-
-  
-
-  useEffect(() => {
-    api
-      .get("/estados")
-      .then((response) => {
-        setEstados(response.data);
-      })
-      .catch((err) => {
-        console.error("ops! ocorreu um erro" + err);
-      });
-  }, []);
-  
-  if (!estados) return <div>Carregando!</div>;
-  
-    return (
+export default function Home() {
+  const { handleChange, estado, estados, response } = useContext(Context);
+  return (
     <div id="App">
       <div>
         <aside class="p-3 text-center text-white bg-black">
@@ -142,13 +114,16 @@ function App() {
               </p>
               <div class="mt-8 sm:justify-center sm:items-center sm:flex">
                 <form>
-                  <select onChange={handleChange} value={estado}
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-96 px-4 py-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <select
+                    onChange={handleChange}
+                    value={estado}
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-96 px-4 py-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
                     <option value="" selected disabled>
                       Selecione um Estado
                     </option>
                     {estados.map((option) => (
-                      <option value={option.sigla} data-geo={option.regiao} >
+                      <option value={option.sigla} data-geo={option.regiao}>
                         {option.estado}
                       </option>
                     ))}
@@ -160,9 +135,7 @@ function App() {
                   href=""
                   class="static flex items-center max-w-xs w-5/6 gap-5 p-5 text-white bg-blue-400 rounded-lg shadow"
                 >
-                  <span class="text-sm w-1/8 font-medium">
-                    {response}
-                  </span>
+                  <span class="text-sm w-1/8 font-medium">{response}</span>
                 </span>
               </div>
             </div>
@@ -180,4 +153,3 @@ function App() {
     </div>
   );
 }
-export default App;
